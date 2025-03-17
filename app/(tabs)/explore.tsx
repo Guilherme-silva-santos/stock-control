@@ -21,7 +21,7 @@ export default function Explore() {
           color: "#808080",
         }}
       >
-        {product}
+        Numero do código de barras {product}
       </Text>
     </View>
   );

@@ -12,33 +12,30 @@ import { useRef, useState } from "react";
 import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
-  const [productName, setProductName] = useState("");
+  const [permition, requestPermission] = useCameraPermissions();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
-
-  const barCodeLock = useRef(false);
 
   const handleOpenCamera = async () => {
     try {
       const { granted } = await requestPermission();
-
       if (!granted) {
-        return Alert.alert("Permission not granted");
+        return Alert.alert(
+          "Permissão negada",
+          "Você precisa permitir o acesso à camera para usar o app."
+        );
       }
-
-      setModalVisible(true);
-      barCodeLock.current = false;
-    } catch (error) {}
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleBarCodeScanned = (data: string) => {
-    setModalVisible(false);
+  const handleCodeScanned = (data: string) => {
+    setIsModalOpen(false);
     console.log(data);
-    setProductName(data);
-
     router.push({
-      pathname: "/explore",
+      pathname: "/(tabs)/explore",
       params: { product: data },
     });
   };
@@ -52,50 +49,26 @@ export default function HomeScreen() {
         justifyContent: "center",
       }}
     >
-      <TouchableOpacity onPress={handleOpenCamera}>
-        <Text style={{ color: "white" }}>Open camera</Text>
-      </TouchableOpacity>
-      <Modal visible={modalVisible}>
+      <Modal visible={isModalOpen}>
         <CameraView
-          style={{ flex: 1 }}
           facing="back"
-          onBarcodeScanned={({ data }) => {
-            if (data && !barCodeLock.current) {
-              barCodeLock.current = true;
-              setTimeout(() => {
-                handleBarCodeScanned(data);
-              }, 500);
-            }
-          }}
-        />
-        <View style={{ position: "absolute", top: 20, right: 20 }}>
+          style={{ flex: 1 }}
+          onBarcodeScanned={({ data }) => handleCodeScanned(data)}
+        >
           <TouchableOpacity
-            style={{ backgroundColor: "black", padding: 10 }}
-            onPress={() => setModalVisible(false)}
+            style={{ backgroundColor: "red" }}
+            onPress={() => setIsModalOpen(false)}
           >
-            <Text style={{ color: "white" }}>Close</Text>
+            <Text>Fechar</Text>
           </TouchableOpacity>
-        </View>
+        </CameraView>
       </Modal>
+      <TouchableOpacity
+        style={{ backgroundColor: "red" }}
+        onPress={handleOpenCamera}
+      >
+        <Text>Open Camera</Text>
+      </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-});
