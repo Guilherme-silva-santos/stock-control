@@ -2,7 +2,7 @@ import { db } from "@/service/firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 export const useFindProductByBarCode = () => {
-  const findProductsByBarCode = async (barCode: number) => {
+  const findProductsByBarCode = async (barCode: string) => {
     try {
       const q = query(
         collection(db, "products"),
