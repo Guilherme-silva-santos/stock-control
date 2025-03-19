@@ -35,19 +35,17 @@ export default function RootLayout() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="/explore" />
-          <Stack.Screen name="/cart" />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar backgroundColor={colors.gray[700]} style="light" />
-      </ThemeProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="/explore" />
+        <Stack.Screen name="/cart" />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar backgroundColor={colors.gray[700]} style="light" />
     </SafeAreaView>
   );
 }

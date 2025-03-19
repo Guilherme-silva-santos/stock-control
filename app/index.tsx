@@ -1,5 +1,7 @@
 import { useFetchProducts } from "@/hooks/useFetchProducts";
 import { useHandleOpenCamera } from "@/hooks/useHandleOpenCamera";
+import { Input } from "@/presentation/atomic/atoms";
+import { Button } from "@/presentation/atomic/atoms/button";
 import { BaseCameraModal, ProductCard } from "@/presentation/atomic/organism";
 
 import { colors, paddings } from "@/theme";
@@ -58,7 +60,14 @@ export default function HomeScreen() {
           </View>
         )}
       />
-      <ProductCard />
+      <ProductCard
+        onButtonPress={() => {}}
+        name="name"
+        price={1}
+        quantity={1}
+      />
+      <Input label="name" placeholder="name" />
+      <Button iconName="add" text="add" icon />
       <TouchableOpacity
         style={{ marginTop: 20, backgroundColor: "blue" }}
         onPress={() => {
