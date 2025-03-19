@@ -1,29 +1,29 @@
-import { AddProductModal } from "@/components/AddProductModal";
 import { useFetchProducts } from "@/hooks/useFetchProducts";
-import { useCameraPermissions } from "expo-camera";
-import { router } from "expo-router";
+import { useHandleOpenCamera } from "@/hooks/useHandleOpenCamera";
+import { BaseCameraModal, ProductCard } from "@/presentation/atomic/organism";
+
+import { colors, paddings } from "@/theme";
+import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 export default function HomeScreen() {
-  const [permition, requestPermission] = useCameraPermissions();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { products, loading } = useFetchProducts();
+  const { handleOpenCamera } = useHandleOpenCamera({
+    setModalOpen: setIsModalOpen,
+  });
   console.log(products);
 
-  const handleOpenCamera = async () => {
-    try {
-      const { granted } = await requestPermission();
-      setIsModalOpen(true);
-      if (!granted) {
-        return Alert.alert(
-          "Permissão Negada",
-          "Você precisa permitir o acesso a camera para usar o app."
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const router = useRouter();
+  const handleCodeScanned = (data: string) => {
+    setIsModalOpen(false);
+    console.log(data);
+
+    router.push({
+      pathname: "/explore",
+      params: { product: data },
+    });
   };
 
   return (
@@ -32,14 +32,15 @@ export default function HomeScreen() {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "red",
-        padding: 80,
+        padding: paddings.lg,
       }}
     >
       {isModalOpen && (
-        <AddProductModal
+        <BaseCameraModal
+          facing="back"
+          onBarcodeScanned={({ data }) => handleCodeScanned(data)}
           isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
+          closeModal={() => setIsModalOpen(false)}
         />
       )}
 
@@ -57,6 +58,7 @@ export default function HomeScreen() {
           </View>
         )}
       />
+      <ProductCard />
       <TouchableOpacity
         style={{ marginTop: 20, backgroundColor: "blue" }}
         onPress={() => {

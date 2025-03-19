@@ -1,34 +1,34 @@
-import { AddProductModal } from "@/components/AddProductModal";
-import { FindProductModal } from "@/components/FindProductModal";
 import { useFindProductByBarCode } from "@/hooks/useFindProductByBarCode";
-import { useCameraPermissions } from "expo-camera";
-import { useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
-export default function Cart() {
-  const [permition, requestPermission] = useCameraPermissions();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+import { useHandleOpenCamera } from "@/hooks/useHandleOpenCamera";
+import { BaseCameraModal } from "@/presentation/atomic/organism";
 
-  const handleOpenCamera = async () => {
-    try {
-      const { granted } = await requestPermission();
-      setIsModalOpen(true);
-      if (!granted) {
-        return Alert.alert(
-          "Permissão Negada",
-          " Vocé precisa permitir o acesso a camera para usar o app."
-        );
-      }
-    } catch (error) {
-      console.log(error);
+import { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+export default function Cart() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { handleOpenCamera } = useHandleOpenCamera({
+    setModalOpen: setIsModalOpen,
+  });
+
+  const { findProductsByBarCode } = useFindProductByBarCode();
+  const handleScan = async (barcode: string) => {
+    const product = await findProductsByBarCode(barcode);
+    if (product) {
+      setIsModalOpen(false);
+      console.log("Produto encontrado:", product);
+    } else {
+      console.log("Produto não encontrado.");
     }
   };
 
   return (
     <View style={{ flex: 1, marginTop: 500 }}>
       {isModalOpen && (
-        <FindProductModal
+        <BaseCameraModal
           isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
+          closeModal={() => setIsModalOpen(false)}
+          onBarcodeScanned={({ data }) => handleScan(data)}
+          facing="back"
         />
       )}
       <TouchableOpacity style={{ backgroundColor: "yellow" }}>
