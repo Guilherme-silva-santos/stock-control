@@ -9,14 +9,20 @@ import {
 } from "react-native";
 
 type InputProps = TextInputProps & {
-  label: string;
+  labelValue?: string;
+  label?: boolean;
   placeholder: string;
 };
 
-export const Input: FC<InputProps> = ({ label, placeholder, ...rest }) => {
+export const Input: FC<InputProps> = ({
+  label,
+  labelValue,
+  placeholder,
+  ...rest
+}) => {
   return (
     <View style={s.container}>
-      <Text>{label}</Text>
+      {label && <Text style={{ fontSize: fontSizes.large }}>{labelValue}</Text>}
       <TextInput style={s.inputContainer} placeholder={placeholder} {...rest} />
     </View>
   );

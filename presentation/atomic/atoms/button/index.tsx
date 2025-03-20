@@ -13,7 +13,7 @@ type IcoName = keyof typeof MaterialIcons.glyphMap;
 type ButtonProps = TouchableOpacityProps & {
   text: string;
   iconName?: IcoName;
-  icon: boolean;
+  icon?: boolean;
 };
 export const Button: FC<ButtonProps> = ({ text, icon, iconName, ...rest }) => {
   return (

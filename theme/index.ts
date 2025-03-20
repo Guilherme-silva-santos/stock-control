@@ -76,4 +76,5 @@ export const radius = {
   none: 0,
   sm: 12,
   xxl: 32,
+  full: 9999,
 } as const satisfies Record<string, number>;

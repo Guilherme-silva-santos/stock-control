@@ -1,14 +1,19 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+const apiKey = process.env.EXPO_PUBLIC_API_KEY;
+const authDomain = process.env.EXPO_PUBLIC_AUTH_DOMAIN;
+const projectId = process.env.EXPO_PUBLIC_PROJECT_ID;
+const storageBucket = process.env.EXPO_PUBLIC_STORAGE_BUCKET;
+const appId = process.env.EXPO_PUBLIC_APP_ID;
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB2tOt1aicdwRwr8NbQY4HK5k-M1DFPyAk",
-  authDomain: "stock-control-silva.firebaseapp.com",
-  projectId: "stock-control-silva",
-  storageBucket: "stock-control-silva.firebasestorage.app",
+  apiKey: apiKey,
+  authDomain: authDomain,
+  projectId: projectId,
+  storageBucket: storageBucket,
   messagingSenderId: "361435188177",
-  appId: "1:361435188177:web:2e903bd4f7cd2b8c09aef0",
+  appId: appId,
   measurementId: "G-SX347Q4P9C",
 };
 
