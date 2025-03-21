@@ -29,7 +29,7 @@ export const HomeTemplate: FC = () => {
     console.log(data);
 
     router.push({
-      pathname: "/cart",
+      pathname: "/addProducts",
       params: { product: data },
     });
   };
@@ -76,7 +76,12 @@ export const HomeTemplate: FC = () => {
               </View>
             ) : (
               products.map((product) => (
-                <ProductCard key={product.id} {...product} />
+                <ProductCard
+                  editButton
+                  hasQuantity
+                  key={product.id}
+                  {...product}
+                />
               ))
             )}
           </View>

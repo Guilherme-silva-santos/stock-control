@@ -11,9 +11,10 @@ export const AddProductTemplate: FC = () => {
   const product = params.get("product");
   const { addProduct } = useAddProducts();
   const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [price, setPrice] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(0);
   console.log(product);
+
   return (
     <UserScreenTemplate canGoBack>
       <View style={s.container}>
@@ -28,16 +29,16 @@ export const AddProductTemplate: FC = () => {
           />
           <Input
             keyboardType="numeric"
-            onChangeText={setPrice}
+            onChangeText={(text) => setPrice(Number(text))}
             label
             labelValue="Preço do produto"
             placeholder="Digite aqui..."
           />
           <Input
             keyboardType="numeric"
-            onChangeText={setQuantity}
+            onChangeText={(text) => setQuantity(Number(text))}
             label
-            labelValue="Valor do Produto"
+            labelValue="Quantidade do produto"
             placeholder="Digite aqui..."
           />
         </View>

@@ -1,14 +1,17 @@
 import { colors, paddings, radius } from "@/theme";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
-import { IconButton } from "../../atoms";
-import { FC } from "react";
+import { IconButton, Stepper } from "../../atoms";
+import { FC, useState } from "react";
 
 type Props = {
-  onButtonPress: () => void;
+  onButtonPress?: () => void;
+  editButton?: boolean;
   name: string;
   price: number;
   quantity: number;
+  hasQuantity?: boolean;
+  hasStepper?: boolean;
 };
 
 export const ProductCard: FC<Props> = ({
@@ -16,19 +19,24 @@ export const ProductCard: FC<Props> = ({
   name,
   price,
   quantity,
+  editButton,
+  hasQuantity,
+  hasStepper,
 }) => {
+  const [stepperValue, setStepperValue] = useState(0);
+
   return (
     <View style={s.container}>
       <View style={s.header}>
         <Text style={s.title}>{name}</Text>
 
-        <IconButton
-          iconColor={colors.primary}
-          iconName="edit"
-          iconSize={24}
-          size={40}
-          onPress={onButtonPress}
-        />
+        {editButton && (
+          <IconButton
+            iconName="edit"
+            iconColor={colors.gray[500]}
+            onPress={onButtonPress}
+          />
+        )}
       </View>
       <View style={s.infoContainer}>
         <View style={s.imageContainer}>
@@ -45,16 +53,23 @@ export const ProductCard: FC<Props> = ({
               size={20}
               color={colors.gray[500]}
             />
-            <Text style={s.productInfo}>{price}</Text>
+            <Text style={s.productInfo}>R$ {price}</Text>
           </View>
-          <View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
-            <MaterialIcons
-              name="production-quantity-limits"
-              size={20}
-              color={colors.gray[500]}
-            />
-            <Text style={s.productInfo}>{quantity}</Text>
-          </View>
+          {hasQuantity && (
+            <View
+              style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
+            >
+              <MaterialIcons
+                name="production-quantity-limits"
+                size={20}
+                color={colors.gray[500]}
+              />
+              <Text style={s.productInfo}>{quantity} em estoque</Text>
+            </View>
+          )}
+          {hasStepper && (
+            <Stepper value={stepperValue} onChange={setStepperValue} />
+          )}
         </View>
       </View>
     </View>
@@ -93,6 +108,7 @@ const s = StyleSheet.create({
   textContainer: {
     width: "70%",
     justifyContent: "center",
+    gap: 4,
   },
   title: {
     fontSize: 16,

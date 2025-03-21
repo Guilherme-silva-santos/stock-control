@@ -6,8 +6,8 @@ export const useAddProducts = () => {
   const router = useRouter();
   const addProduct = async (
     name: string,
-    price: string,
-    quantity: string,
+    price: number,
+    quantity: number,
     barcode: string
   ) => {
     try {
