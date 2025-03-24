@@ -4,7 +4,7 @@ import { fontSizes, paddings } from "@/theme";
 import { useRef, useState } from "react";
 import { useHandleOpenCamera } from "@/hooks/useHandleOpenCamera";
 import { useFindProductByBarCode } from "@/hooks/useFindProductByBarCode";
-import { BaseCameraModal, ProductCard } from "../../organism";
+import { BaseCameraModal, CartTotalFooter, ProductCard } from "../../organism";
 import { FloatButton } from "../../atoms";
 import { DocumentData } from "firebase/firestore";
 
@@ -16,13 +16,16 @@ export const CartTemplate = () => {
   });
   const [scannedProducts, setScannedProducts] = useState<DocumentData[]>([]);
   const { findProductsByBarCode } = useFindProductByBarCode();
-  const sum = scannedProducts.reduce((acc, product) => acc + product.price, 0);
-  const [quantityProducts, setQuantityProducts] = useState<number>(0);
+  const sum = scannedProducts.reduce(
+    (acc, product) => acc + product.price * product.quantity,
+    0
+  );
 
   const total = Number(sum.toFixed(2));
 
   const handleScannedCode = async (barcode: string) => {
     const product = await findProductsByBarCode(barcode);
+    console.log("Produto encontrado:", product);
     if (isScanning.current) return;
     isScanning.current = true;
 
@@ -30,11 +33,22 @@ export const CartTemplate = () => {
 
     if (product) {
       setIsModalOpen(false);
-      setScannedProducts((prevProducts) => [...prevProducts, product]);
+      setScannedProducts((prevProducts) => {
+        const existingProduct = prevProducts.find(
+          (p) => p.barcode === product.barcode
+        );
+        if (existingProduct) {
+          return prevProducts.map((p) =>
+            p.barcode === product.barcode
+              ? { ...p, quantity: p.quantity + 1 }
+              : p
+          );
+        }
 
-      console.log("Produto encontrado:", scannedProducts);
+        return [...prevProducts, { ...product, quantity: 1 }];
+      });
     } else {
-      console.log("Produto não encontrado.");
+      console.log("Produto nao encontrado");
     }
   };
 
@@ -55,11 +69,20 @@ export const CartTemplate = () => {
           <View style={{ gap: 8 }}>
             {scannedProducts.map((product) => (
               <ProductCard
-                key={product.name}
+                key={product.barcode}
                 name={product.name}
                 price={product.price}
-                quantity={product.quantity}
                 onButtonPress={() => console.log("Editar produto")}
+                quantity={product.quantity}
+                onQuantityChange={(newQuantity) =>
+                  setScannedProducts((prev) =>
+                    prev.map((p) =>
+                      p.barcode === product.barcode
+                        ? { ...p, quantity: newQuantity }
+                        : p
+                    )
+                  )
+                }
                 hasStepper
               />
             ))}
@@ -72,8 +95,6 @@ export const CartTemplate = () => {
               facing="back"
             />
           )}
-          <Text>{total}</Text>
-          <Text>{quantityProducts}</Text>
         </View>
       </ScrollView>
       <FloatButton
@@ -81,6 +102,7 @@ export const CartTemplate = () => {
         iconSize={24}
         onPress={handleOpenCamera}
       />
+      <CartTotalFooter total={total} />
     </UserScreenTemplate>
   );
 };

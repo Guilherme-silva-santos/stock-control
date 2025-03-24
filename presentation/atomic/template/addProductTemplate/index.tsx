@@ -12,8 +12,6 @@ export const AddProductTemplate: FC = () => {
   const { addProduct } = useAddProducts();
   const [name, setName] = useState("");
   const [price, setPrice] = useState<number>(0);
-  const [quantity, setQuantity] = useState<number>(0);
-  console.log(product);
 
   return (
     <UserScreenTemplate canGoBack>
@@ -34,17 +32,10 @@ export const AddProductTemplate: FC = () => {
             labelValue="Preço do produto"
             placeholder="Digite aqui..."
           />
-          <Input
-            keyboardType="numeric"
-            onChangeText={(text) => setQuantity(Number(text))}
-            label
-            labelValue="Quantidade do produto"
-            placeholder="Digite aqui..."
-          />
         </View>
         <View style={{ justifyContent: "flex-end", flex: 1 }}>
           <Button
-            onPress={() => addProduct(name, price, quantity, product!)}
+            onPress={() => addProduct(name, price, product!)}
             text="Adicionar produto"
           />
         </View>

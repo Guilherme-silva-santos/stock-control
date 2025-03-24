@@ -4,17 +4,11 @@ import { addDoc, collection } from "firebase/firestore";
 
 export const useAddProducts = () => {
   const router = useRouter();
-  const addProduct = async (
-    name: string,
-    price: number,
-    quantity: number,
-    barcode: string
-  ) => {
+  const addProduct = async (name: string, price: number, barcode: string) => {
     try {
       await addDoc(collection(db, "products"), {
         name,
         price,
-        quantity,
         barcode,
       });
       console.log("Produto adicionado com sucesso!");

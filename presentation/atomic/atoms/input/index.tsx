@@ -30,12 +30,12 @@ export const Input: FC<InputProps> = ({
 
 const s = StyleSheet.create({
   container: {
-    width: "100%",
+    minWidth: "100%",
     gap: 8,
   },
 
   inputContainer: {
-    minHeight: 46,
+    minHeight: 20,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.gray[300],

@@ -9,22 +9,20 @@ type Props = {
   editButton?: boolean;
   name: string;
   price: number;
-  quantity: number;
-  hasQuantity?: boolean;
   hasStepper?: boolean;
+  quantity?: number;
+  onQuantityChange?: (quantity: number) => void;
 };
 
 export const ProductCard: FC<Props> = ({
   onButtonPress,
+  quantity,
+  onQuantityChange,
   name,
   price,
-  quantity,
   editButton,
-  hasQuantity,
   hasStepper,
 }) => {
-  const [stepperValue, setStepperValue] = useState(0);
-
   return (
     <View style={s.container}>
       <View style={s.header}>
@@ -55,20 +53,11 @@ export const ProductCard: FC<Props> = ({
             />
             <Text style={s.productInfo}>R$ {price}</Text>
           </View>
-          {hasQuantity && (
-            <View
-              style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
-            >
-              <MaterialIcons
-                name="production-quantity-limits"
-                size={20}
-                color={colors.gray[500]}
-              />
-              <Text style={s.productInfo}>{quantity} em estoque</Text>
-            </View>
-          )}
           {hasStepper && (
-            <Stepper value={stepperValue} onChange={setStepperValue} />
+            <Stepper
+              value={quantity!}
+              onChange={(newQuantity) => onQuantityChange(newQuantity)}
+            />
           )}
         </View>
       </View>

@@ -9,18 +9,23 @@ import {
 import { useRouter } from "expo-router";
 import { useHandleOpenCamera } from "@/hooks/useHandleOpenCamera";
 import { useFetchProducts } from "@/hooks/useFetchProducts";
-import { BaseCameraModal, ProductCard } from "../../organism";
+import { BaseCameraModal, EditProductModal, ProductCard } from "../../organism";
 import { FloatButton, IconButton } from "../../atoms";
 import { colors, fontSizes, paddings } from "@/theme";
 import { UserScreenTemplate } from "../userScreenTemplate";
+import { useUpdateProduct } from "@/hooks/useUpdateProduct";
+import { FilterForm } from "../../organism/filterForm";
 
 export const HomeTemplate: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { products, loading } = useFetchProducts();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [newPrice, setNewPrice] = useState<number>(0);
+  const [filterVisible, setFilterVisible] = useState(false);
+  const { updateProduct } = useUpdateProduct();
+  const { products, loading, refetch } = useFetchProducts();
   const { handleOpenCamera } = useHandleOpenCamera({
     setModalOpen: setIsModalOpen,
   });
-  console.log(products);
 
   const router = useRouter();
 
@@ -32,6 +37,12 @@ export const HomeTemplate: FC = () => {
       pathname: "/addProducts",
       params: { product: data },
     });
+  };
+
+  const handleUdatePrice = async (id: string) => {
+    await updateProduct(id, newPrice);
+    refetch();
+    setIsEditModalOpen(false);
   };
 
   return (
@@ -51,14 +62,20 @@ export const HomeTemplate: FC = () => {
           )}
           <View style={s.listHeader}>
             <Text style={s.listHeaderTitle}>Listagem de Produtos</Text>
-            <IconButton
-              iconSize={24}
-              iconColor={colors.gray[900]}
-              variant="default"
-              iconName="filter-list"
-              color={colors.gray[200]}
-              size={40}
-            />
+
+            {filterVisible ? (
+              <FilterForm />
+            ) : (
+              <IconButton
+                iconSize={24}
+                iconColor={colors.gray[900]}
+                variant="default"
+                iconName="search"
+                color={colors.gray[200]}
+                size={40}
+                onPress={() => setFilterVisible(true)}
+              />
+            )}
           </View>
           <View style={{ gap: 8 }}>
             {loading ? (
@@ -81,9 +98,18 @@ export const HomeTemplate: FC = () => {
                   hasQuantity
                   key={product.id}
                   {...product}
+                  onButtonPress={() => {
+                    setIsEditModalOpen(true);
+                  }}
                 />
               ))
             )}
+            <EditProductModal
+              isModalOpen={isEditModalOpen}
+              closeModal={() => setIsEditModalOpen(false)}
+              onchangeText={(value) => setNewPrice(Number(value))}
+              onSave={() => handleUdatePrice(products[0].id)}
+            />
           </View>
         </View>
       </ScrollView>
