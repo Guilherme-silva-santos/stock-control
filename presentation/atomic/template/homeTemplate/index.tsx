@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -21,13 +21,21 @@ export const HomeTemplate: FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newPrice, setNewPrice] = useState<number>(0);
   const [filterVisible, setFilterVisible] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const { updateProduct } = useUpdateProduct();
   const { products, loading, refetch } = useFetchProducts();
   const { handleOpenCamera } = useHandleOpenCamera({
     setModalOpen: setIsModalOpen,
   });
-
   const router = useRouter();
+
+  useEffect(() => {
+    const data = products.filter((product) =>
+      product.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredProducts(data);
+  }, [searchText, products]);
 
   const handleCodeScanned = (data: string) => {
     setIsModalOpen(false);
@@ -63,20 +71,24 @@ export const HomeTemplate: FC = () => {
           <View style={s.listHeader}>
             <Text style={s.listHeaderTitle}>Listagem de Produtos</Text>
 
-            {filterVisible ? (
-              <FilterForm />
-            ) : (
-              <IconButton
-                iconSize={24}
-                iconColor={colors.gray[900]}
-                variant="default"
-                iconName="search"
-                color={colors.gray[200]}
-                size={40}
-                onPress={() => setFilterVisible(true)}
-              />
-            )}
+            <IconButton
+              iconSize={24}
+              iconColor={colors.gray[900]}
+              variant="default"
+              iconName="search"
+              color={colors.gray[200]}
+              size={40}
+              onPress={() => {
+                if (filterVisible) {
+                  setFilterVisible(false);
+                } else {
+                  setFilterVisible(true);
+                }
+              }}
+            />
           </View>
+
+          {filterVisible && <FilterForm onChangeText={setSearchText} />}
           <View style={{ gap: 8 }}>
             {loading ? (
               <View style={s.loadingContainer}>
@@ -92,17 +104,19 @@ export const HomeTemplate: FC = () => {
                 <ActivityIndicator size={"large"} />
               </View>
             ) : (
-              products.map((product) => (
-                <ProductCard
-                  editButton
-                  hasQuantity
-                  key={product.id}
-                  {...product}
-                  onButtonPress={() => {
-                    setIsEditModalOpen(true);
-                  }}
-                />
-              ))
+              (filteredProducts.length > 0 ? filteredProducts : products).map(
+                (product) => (
+                  <ProductCard
+                    editButton
+                    hasQuantity
+                    key={product.id}
+                    {...product}
+                    onButtonPress={() => {
+                      setIsEditModalOpen(true);
+                    }}
+                  />
+                )
+              )
             )}
             <EditProductModal
               isModalOpen={isEditModalOpen}
