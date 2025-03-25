@@ -16,13 +16,19 @@ import { UserScreenTemplate } from "../userScreenTemplate";
 import { useUpdateProduct } from "@/hooks/useUpdateProduct";
 import { FilterForm } from "../../organism/filterForm";
 
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+};
 export const HomeTemplate: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newPrice, setNewPrice] = useState<number>(0);
   const [filterVisible, setFilterVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const { updateProduct } = useUpdateProduct();
   const { products, loading, refetch } = useFetchProducts();
   const { handleOpenCamera } = useHandleOpenCamera({
@@ -47,8 +53,10 @@ export const HomeTemplate: FC = () => {
     });
   };
 
-  const handleUdatePrice = async (id: string) => {
-    await updateProduct(id, newPrice);
+  const handleUdatePrice = async () => {
+    if (!selectedProduct) return;
+    await updateProduct(selectedProduct.id, newPrice);
+
     refetch();
     setIsEditModalOpen(false);
   };
@@ -112,6 +120,7 @@ export const HomeTemplate: FC = () => {
                     key={product.id}
                     {...product}
                     onButtonPress={() => {
+                      setSelectedProduct(product);
                       setIsEditModalOpen(true);
                     }}
                   />
@@ -122,7 +131,7 @@ export const HomeTemplate: FC = () => {
               isModalOpen={isEditModalOpen}
               closeModal={() => setIsEditModalOpen(false)}
               onchangeText={(value) => setNewPrice(Number(value))}
-              onSave={() => handleUdatePrice(products[0].id)}
+              onSave={handleUdatePrice}
             />
           </View>
         </View>

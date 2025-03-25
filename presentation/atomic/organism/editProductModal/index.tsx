@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, StyleSheet, Text, View } from "react-native";
 import { Button, IconButton, Input } from "../../atoms";
 import { colors, fontSizes, paddings } from "@/theme";
 
@@ -22,7 +22,7 @@ export const EditProductModal: FC<Props> = ({
         <View style={s.container}>
           <View style={s.header}>
             <View style={{ width: 40 }} />
-            <Text style={s.title}>Editar Produto</Text>
+            <Text style={s.title}>Editar Preço do Produto</Text>
             <IconButton
               iconName="close"
               iconColor={colors.gray[900]}
