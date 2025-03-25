@@ -1,16 +1,17 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { UserScreenTemplate } from "../userScreenTemplate";
 import { fontSizes, paddings } from "@/theme";
 import { useRef, useState } from "react";
 import { useHandleOpenCamera } from "@/hooks/useHandleOpenCamera";
 import { useFindProductByBarCode } from "@/hooks/useFindProductByBarCode";
 import { BaseCameraModal, CartTotalFooter, ProductCard } from "../../organism";
-import { FloatButton } from "../../atoms";
+import { Button, FloatButton } from "../../atoms";
 import { DocumentData } from "firebase/firestore";
 
 export const CartTemplate = () => {
   const isScanning = useRef(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOrderOpen, setIsModalOrderOpen] = useState(false);
   const { handleOpenCamera } = useHandleOpenCamera({
     setModalOpen: setIsModalOpen,
   });
@@ -22,6 +23,11 @@ export const CartTemplate = () => {
   );
 
   const total = Number(sum.toFixed(2));
+
+  const completeOrder = () => {
+    setIsModalOrderOpen(true);
+    setScannedProducts([]);
+  };
 
   const handleScannedCode = async (barcode: string) => {
     const product = await findProductsByBarCode(barcode);
@@ -54,7 +60,7 @@ export const CartTemplate = () => {
 
   return (
     <UserScreenTemplate>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
+      <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View style={s.container}>
           <Text
             style={{
@@ -95,6 +101,10 @@ export const CartTemplate = () => {
               facing="back"
             />
           )}
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+            <CartTotalFooter total={total} />
+            <Button text="Finalizar compra" onPress={completeOrder} />
+          </View>
         </View>
       </ScrollView>
       <FloatButton
@@ -102,7 +112,6 @@ export const CartTemplate = () => {
         iconSize={24}
         onPress={handleOpenCamera}
       />
-      <CartTotalFooter total={total} />
     </UserScreenTemplate>
   );
 };

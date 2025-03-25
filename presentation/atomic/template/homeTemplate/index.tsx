@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useHandleOpenCamera } from "@/hooks/useHandleOpenCamera";
 import { useFetchProducts } from "@/hooks/useFetchProducts";
 import { BaseCameraModal, EditProductModal, ProductCard } from "../../organism";
@@ -35,6 +35,14 @@ export const HomeTemplate: FC = () => {
     setModalOpen: setIsModalOpen,
   });
   const router = useRouter();
+  const { shouldRefetch } = useLocalSearchParams();
+
+  useEffect(() => {
+    if (shouldRefetch === "true") {
+      refetch();
+      console.log("Refetching...");
+    }
+  }, [shouldRefetch]);
 
   useEffect(() => {
     const data = products.filter((product) =>
@@ -53,7 +61,7 @@ export const HomeTemplate: FC = () => {
     });
   };
 
-  const handleUdatePrice = async () => {
+  const handleUpdatePrice = async () => {
     if (!selectedProduct) return;
     await updateProduct(selectedProduct.id, newPrice);
 
@@ -131,7 +139,7 @@ export const HomeTemplate: FC = () => {
               isModalOpen={isEditModalOpen}
               closeModal={() => setIsEditModalOpen(false)}
               onchangeText={(value) => setNewPrice(Number(value))}
-              onSave={handleUdatePrice}
+              onSave={handleUpdatePrice}
             />
           </View>
         </View>

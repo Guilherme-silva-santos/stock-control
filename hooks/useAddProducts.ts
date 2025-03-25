@@ -12,7 +12,10 @@ export const useAddProducts = () => {
         barcode,
       });
       console.log("Produto adicionado com sucesso!");
-      router.push("/");
+      router.push({
+        pathname: "/",
+        params: { shouldRefetch: "true" },
+      });
     } catch (error) {
       console.log(error);
     }
